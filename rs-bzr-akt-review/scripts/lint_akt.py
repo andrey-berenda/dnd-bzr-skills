@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Brza mehanička provera teksta akta (posle extract_text.py).
 
-Upotreba:  python3 lint_akt.py <tekst.txt> [--type risk|gradiliste|nalaz|auto] [--today YYYY-MM-DD]
+Upotreba:  python lint_akt.py <tekst.txt | -> [--type risk|gradiliste|nalaz|auto] [--today YYYY-MM-DD]
 
 Ovo su HEURISTIKE: nalaze sumnjiva mesta, a odluku donosi revizor. Ispisuje listu
 nalaza „ŠIFRA – opis – red“. Ništa ne ispravlja. Samo standardna biblioteka.
@@ -138,7 +138,12 @@ def main():
     ap.add_argument("--type", default="auto", choices=["auto", "risk", "gradiliste", "nalaz"])
     ap.add_argument("--today", default=None)
     a = ap.parse_args()
-    text = open(a.file, encoding="utf-8", errors="replace").read()
+    if hasattr(sys.stdout, "reconfigure"):  # Windows konzola: ne sme da pukne na č, š, ž, ć, đ
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if a.file == "-":
+        text = sys.stdin.buffer.read().decode("utf-8-sig", errors="replace")
+    else:
+        text = open(a.file, encoding="utf-8-sig", errors="replace").read()
     today = dt.date.fromisoformat(a.today) if a.today else dt.date.today()
 
     t = a.type

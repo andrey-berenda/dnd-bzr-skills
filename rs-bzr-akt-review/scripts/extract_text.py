@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """Izdvaja tekst iz .docx / .xlsx / .pdf / .txt / .md za reviziju akata.
 
-Upotreba:  python3 extract_text.py <fajl> [> out.txt]
+Upotreba:  python extract_text.py <fajl> [-o izlaz.txt]
+(na Windows-u: py -3 extract_text.py <fajl> -o izlaz.txt; na macOS/Linux: python3 ...)
+Preporuka: koristiti -o, jer preusmeravanje (>) u PowerShell-u može pokvariti kodiranje (č, š, ž, ć, đ).
+Izlaz je uvek UTF-8.
 
 - .docx: pasusi i tabele po redosledu u dokumentu (tabele – redovi sa razdvajačem " | ").
 - .xlsx: svaki list, redovi sa " | ".
 - .pdf: preko `pdftotext -layout` (ako ga nema – preko pypdf). Za skenirane PDF treba OCR.
 - ostalo: čita se kao UTF-8 tekst.
-Samo standardna biblioteka (+ pdftotext/pypdf za PDF; defusedxml ako je instaliran).
+Samo standardna biblioteka (+ za PDF: `pdftotext` ili `pip install pypdf`; defusedxml ako je instaliran).
 """
+import argparse
 import re
 import shutil
 import subprocess
@@ -88,20 +92,24 @@ def xlsx_text(path):
 
 def pdf_text(path):
     if shutil.which("pdftotext"):
-        r = subprocess.run(["pdftotext", "-layout", path, "-"], capture_output=True, text=True)
+        r = subprocess.run(["pdftotext", "-layout", "-enc", "UTF-8", path, "-"],
+                           capture_output=True, text=True, encoding="utf-8", errors="replace")
         if r.returncode == 0 and r.stdout.strip():
             return r.stdout
     try:
         from pypdf import PdfReader  # type: ignore
         return "\n".join((p.extract_text() or "") for p in PdfReader(path).pages)
     except Exception as e:  # noqa: BLE001
-        sys.exit(f"Nije moguće izdvojiti tekst iz PDF-a ({e}). Verovatno je sken – potreban je OCR.")
+        sys.exit(f"Nije moguće izdvojiti tekst iz PDF-a ({e}). Instalirajte `pip install pypdf` (ili pdftotext); "
+                 "ako je PDF sken – potreban je OCR.")
 
 
 def main():
-    if len(sys.argv) != 2:
-        sys.exit(__doc__)
-    path = sys.argv[1]
+    ap = argparse.ArgumentParser(description="Izdvaja tekst iz docx/xlsx/pdf/txt (izlaz UTF-8).")
+    ap.add_argument("file")
+    ap.add_argument("-o", "--output", help="upisati rezultat u ovaj fajl (UTF-8) umesto na stdout")
+    a = ap.parse_args()
+    path = a.file
     low = path.lower()
     if _XML_FALLBACK and low.endswith((".docx", ".xlsx")):
         sys.stderr.write("[upozorenje] defusedxml nije instaliran (pip install defusedxml); koristi se standardni XML parser\n")
@@ -114,10 +122,15 @@ def main():
     elif low.endswith(".doc"):
         sys.exit("Stari .doc: sačuvajte kao .docx ili PDF (ili `soffice --headless --convert-to docx`).")
     else:
-        text = open(path, encoding="utf-8", errors="replace").read()
-    sys.stdout.write(text)
+        text = open(path, encoding="utf-8-sig", errors="replace").read()
     if not text.strip():
-        sys.exit("\n[Prazno: verovatno sken ili zaštićen fajl]")
+        sys.exit("[Prazno: verovatno sken ili zaštićen fajl]")
+    if a.output:
+        with open(a.output, "w", encoding="utf-8", newline="\n") as f:
+            f.write(text)
+        sys.stderr.write(f"Upisano: {a.output} ({len(text)} znakova)\n")
+    else:
+        sys.stdout.buffer.write(text.encode("utf-8"))
 
 
 if __name__ == "__main__":

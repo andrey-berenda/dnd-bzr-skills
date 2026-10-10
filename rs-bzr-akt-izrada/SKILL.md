@@ -40,7 +40,7 @@ Pre pisanja razjasni (postavi pitanja u listi, ako nešto nedostaje; ne pitaj on
 
 ## Korak 4. Samoprovera pre predaje
 
-1. Izvezi nacrt u tekst, pokreni `scripts/lint_akt.py` iz rs-bzr-akt-review (oznake `⟦POPUNITI⟧` su očekivane – nabroj ih kao otvorena pitanja).
+1. Izvezi nacrt u tekst (UTF-8), pokreni `python scripts/lint_akt.py nacrt.txt` iz rs-bzr-akt-review (na Windows-u `py -3`; oznake `⟦POPUNITI⟧` su očekivane – nabroj ih kao otvorena pitanja).
 2. Prođi kontrolnu listu odgovarajuće vrste dokumenta (odeljci A–J za akt) i ispravi pronađeno.
 3. U odgovoru: šta je pripremljeno, spisak otvorenih polja `⟦POPUNITI⟧`, koje činjenice su potrebne od klijenta, šta treba da proveri licencirano stručno lice pre potpisa. Ne nazivaj dokument „spremnim za potpis“.
 
