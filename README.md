@@ -18,6 +18,8 @@ Stanje na dan **2026-10-10**: ZBZR 35/2023, pravilnik o proceni rizika 76/2024, 
 Nije pokriveno: zaštita od požara, smanjenje rizika od katastrofa, upravljanje otpadom, hemikalije.
 
 ## Instalacija
+Detaljna uputstva (Python, dodavanje u Claude, provera): [`INSTALACIJA.md`](INSTALACIJA.md).
+
 Arhive se prave komandom `python package.py` (izlaz: `dist/*.skill`), zatim se dodaju u Claude. Skripte (`extract_text.py`, `lint_akt.py`) koriste samo standardnu biblioteku Pythona 3.9+.
 
 ### Windows
