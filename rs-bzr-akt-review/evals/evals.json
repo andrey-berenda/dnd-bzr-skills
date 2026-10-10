@@ -1,0 +1,59 @@
+{
+  "skill_name": "rs-bzr-akt-review",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "akt-o-proceni-rizika-sa-greskama",
+      "prompt": "Proveri ovaj akt o proceni rizika za našeg klijenta (veleprodaja, 38 zaposlenih). Nađi greške i reci da li sme da se da direktoru na potpis.",
+      "files": ["evals/fixtures/akt_sample_flawed.md"],
+      "expected_output": "Izveštaj na srpskom. Ocena „ne sme da se potpiše“. Primedbe (najmanje): zastareli pozivi na ZBZR 101/05 i pravilnik 72/06, termin radna okolina; saradnik umesto savetnika za trgovinu na veliko (ZBZR čl. 48); nema broja/datuma licence procenjivača; vozač viljuškara i vozač dostavnog vozila nisu u spisku povećanog rizika (ZBZR čl. 4); za magacionera nisu utvrđeni posebni zdravstveni uslovi, interval 24 meseca nije obrazložen; aritmetika 2×5=10, a u tabeli 11; mere bez rokova i odgovornih; zaključak bez izjave poslodavca; obuka na 3 godine za mesta sa povećanim rizikom (čl. 34 – 1 godina); nepopunjeno polje [adresa]; nema odluke i plana sprovođenja; nema potpisa.",
+      "assertions": [
+        {"text": "Izveštaj je na srpskom jeziku", "type": "manual"},
+        {"text": "Ocena: ne sme da se potpiše (ili ekvivalent)", "type": "regex", "value": "(ne sme da se potpiše|ne može da se potpiše|nije spreman za potpis)"},
+        {"text": "Navedeno da vozači (viljuškar/dostavno vozilo) moraju biti mesta sa povećanim rizikom (ZBZR čl. 4)", "type": "regex", "value": "(viljuškar|vozač)[\\s\\S]{0,300}povećan"},
+        {"text": "Navedeno da su pozivi na ZBZR 101/05 zastareli (zamenjen 35/2023)", "type": "regex", "value": "101/0?5[\\s\\S]{0,250}35/2023|35/2023[\\s\\S]{0,250}101/0?5"},
+        {"text": "Navedeno odsustvo broja i datuma licence procenjivača", "type": "regex", "value": "licenc"},
+        {"text": "Uočena aritmetička greška u tabeli rizika (2 × 5 = 10, a piše 11)", "type": "regex", "value": "(2\\s*[×x*]\\s*5|11)[\\s\\S]{0,200}10"},
+        {"text": "Navedeno da je periodična obuka za mesta sa povećanim rizikom najkasnije 1 godina (čl. 34)", "type": "regex", "value": "(1 godin|jednom godišnje|čl\\. 34)"},
+        {"text": "Navedeno da mere nemaju rokove/odgovorna lica", "type": "regex", "value": "rok[\\s\\S]{0,150}odgovorn"},
+        {"text": "Nisu izmišljeni brojevi članova koji ne postoje u baseline", "type": "manual"}
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "nalaz-rok-i-elementi",
+      "prompt": "Klijent nam je poslao stručni nalaz o pregledu električnih instalacija. Pregled je bio 03.02.2026, nalaz izdat 20.04.2026, potpisao ga je inženjer bez navedene licence, zaključak glasi „preporučuje se provera instalacije u hali 2“. Nema priloga. Šta nije u redu?",
+      "files": [],
+      "expected_output": "Nalaz izdat posle 30 dana (čl. 5; ZBZR čl. 15); nema kopija licenci pravnog lica i odgovornog lica; zaključak nije nedvosmislen (da li su mere primenjene i da li je instalacija bezbedna, čl. 6 tač. 11); nema obaveznih elemenata; pomenuti nalepnicu „NEISPRAVNO! …“ kada mere nisu primenjene i rok sledećeg pregleda (do 3 godine za elektro, 6 meseci za gradilište).",
+      "assertions": [
+        {"text": "Navedeno prekoračenje roka od 30 dana", "type": "regex", "value": "30\\s*dana"},
+        {"text": "Navedeno odsustvo kopija licenci / licence odgovornog lica", "type": "regex", "value": "licenc"},
+        {"text": "Navedeno da zaključak nije nedvosmislen", "type": "regex", "value": "zaključ"},
+        {"text": "Nije rečeno da je nalaz u redu", "type": "manual"}
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "van-opsega-pozar",
+      "prompt": "Proveri naš plan zaštite od požara za magacin od 2000 m². Da li je sve u skladu sa zakonom?",
+      "files": [],
+      "expected_output": "Skill otvoreno kaže da zaštita od požara nije pokrivena proverenom normativnom osnovom; ne navodi konkretne članove; traži tekst propisa/dokument i nudi samo strukturnu i unutrašnju proveru.",
+      "assertions": [
+        {"text": "Rečeno je da oblast zaštite od požara nije pokrivena / nema proverene normativne osnove", "type": "regex", "value": "(nije pokriven|nema proverene|nije provereno|van opsega)"},
+        {"text": "Nisu navedeni konkretni brojevi članova zakona o zaštiti od požara kao činjenica", "type": "manual"},
+        {"text": "Traži se sam dokument ili tekst propisa", "type": "regex", "value": "(dostavi|priloži|pošalji|tekst propisa)"}
+      ]
+    },
+    {
+      "id": 4,
+      "eval_name": "rok-2027-nije-povreda",
+      "prompt": "Pravimo akt o proceni rizika po strukturi starog pravilnika 72/2006 (još nismo prepravili). Da li je to povreda?",
+      "files": [],
+      "expected_output": "Ispravno razlikovanje: pravilnik 72/2006 zamenjen je pravilnikom 76/2024 (na snazi od 21.9.2024), ali je rok za usklađivanje akta 1.1.2027 (čl. 21); za novi akt treba nova struktura (8 delova), za stari – rizik/preporuka do 1.1.2027. Zakon 35/2023 već sada zahteva akt za sva radna mesta.",
+      "assertions": [
+        {"text": "Pomenut datum 1.1.2027", "type": "regex", "value": "(1\\.\\s?1\\.\\s?2027|1\\. januar[a]? 2027)"},
+        {"text": "Razlikovana povreda od rizika/roka za usklađivanje", "type": "regex", "value": "(rizik|preporuk|prelaz|usklađiv)"}
+      ]
+    }
+  ]
+}
