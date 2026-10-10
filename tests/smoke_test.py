@@ -17,6 +17,10 @@ SCRIPTS = ROOT / "rs-bzr-akt-review" / "scripts"
 FIXTURE = ROOT / "rs-bzr-akt-review" / "evals" / "fixtures" / "akt_sample_flawed.md"
 
 
+if hasattr(sys.stdout, "reconfigure"):  # Windows konzola (cp1252) ne sme da pukne na č, š, ž, ć, đ
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+
 def run(*args, stdin=None):
     env = dict(os.environ)
     env.pop("PYTHONUTF8", None)          # simulira podrazumevana podešavanja (na Windows-u cp1252/cp1250)
