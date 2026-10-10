@@ -23,7 +23,7 @@ Arhive se prave komandom `python package.py` (izlaz: `dist/*.skill`), zatim se d
 ### Windows
 - Python 3 sa python.org (ili `py -3` iz Python launchera). Komande: `py -3 rs-bzr-akt-review\scripts\extract_text.py akt.docx -o akt.txt`, zatim `py -3 rs-bzr-akt-review\scripts\lint_akt.py akt.txt`.
 - Uvek koristiti `-o`; preusmeravanje `>` u PowerShell-u kvari č, š, ž, ć, đ. Skripte čitaju i pišu UTF-8.
-- PDF: `pip install pypdf` (ili `pdftotext` iz Poppler paketa). Skenirani PDF zahteva OCR.
+- Ulaz je isključivo Word (`.docx`). PDF, skenovi i stari `.doc` se ne čitaju – skill traži Word fajl.
 - Opciono: `pip install defusedxml` (bezbednije čitanje .docx/.xlsx).
 - Test: `python tests/smoke_test.py`; isti test se automatski izvršava na Windows-u, macOS-u i Linux-u (GitHub Actions).
 

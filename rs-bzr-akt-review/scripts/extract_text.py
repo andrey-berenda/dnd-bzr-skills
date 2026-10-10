@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Izdvaja tekst iz .docx / .xlsx / .pdf / .txt / .md za reviziju akata.
+"""Izdvaja tekst iz Word dokumenta (.docx), a po potrebi .xlsx / .txt / .md, za reviziju akata.
 
 Upotreba:  python extract_text.py <fajl> [-o izlaz.txt]
 (na Windows-u: py -3 extract_text.py <fajl> -o izlaz.txt; na macOS/Linux: python3 ...)
@@ -8,14 +8,12 @@ Izlaz je uvek UTF-8.
 
 - .docx: pasusi i tabele po redosledu u dokumentu (tabele – redovi sa razdvajačem " | ").
 - .xlsx: svaki list, redovi sa " | ".
-- .pdf: preko `pdftotext -layout` (ako ga nema – preko pypdf). Za skenirane PDF treba OCR.
+- .pdf i .doc se NE čitaju: skript prekida rad i traži Word (.docx) dokument.
 - ostalo: čita se kao UTF-8 tekst.
-Samo standardna biblioteka (+ za PDF: `pdftotext` ili `pip install pypdf`; defusedxml ako je instaliran).
+Samo standardna biblioteka (defusedxml se koristi ako je instaliran).
 """
 import argparse
 import re
-import shutil
-import subprocess
 import sys
 import zipfile
 
@@ -90,37 +88,10 @@ def xlsx_text(path):
         return "\n".join(out)
 
 
-def fix_diacritics(text):
-    """Mnogi srpski PDF-ovi (stari fontovi) daju ĉ/ţ/Ċ umesto č/ž/đ. Popravlja samo ako su takvi znaci prisutni."""
-    if not re.search(r"[ĉĈţŢĊ]", text):
-        return text, 0
-    n = len(re.findall(r"[ĉĈţŢĊ]", text))
-    text = (text.replace("ĉ", "č").replace("Ĉ", "Č").replace("ţ", "ž").replace("Ţ", "Ž"))
-    # Ċ je obično đ unutar reči malim slovima (predviĊeno), a Đ na početku reči/velikim slovima
-    text = re.sub(r"(?<=[a-zčćšžđ])Ċ|Ċ(?=[a-zčćšžđ])", "đ", text)
-    text = text.replace("Ċ", "Đ")
-    return text, n
-
-
-def pdf_text(path):
-    if shutil.which("pdftotext"):
-        r = subprocess.run(["pdftotext", "-layout", "-enc", "UTF-8", path, "-"],
-                           capture_output=True, text=True, encoding="utf-8", errors="replace")
-        if r.returncode == 0 and r.stdout.strip():
-            return r.stdout
-    try:
-        from pypdf import PdfReader  # type: ignore
-        return "\n".join((p.extract_text() or "") for p in PdfReader(path).pages)
-    except Exception as e:  # noqa: BLE001
-        sys.exit(f"Nije moguće izdvojiti tekst iz PDF-a ({e}). Instalirajte `pip install pypdf` (ili pdftotext); "
-                 "ako je PDF sken – potreban je OCR.")
-
-
 def main():
-    ap = argparse.ArgumentParser(description="Izdvaja tekst iz docx/xlsx/pdf/txt (izlaz UTF-8).")
+    ap = argparse.ArgumentParser(description="Izdvaja tekst iz docx (i xlsx/txt/md); izlaz UTF-8.")
     ap.add_argument("file")
     ap.add_argument("-o", "--output", help="upisati rezultat u ovaj fajl (UTF-8) umesto na stdout")
-    ap.add_argument("--no-fix-diacritics", action="store_true", help="ne popravljati oštećene dijakritike u PDF-u (ĉ→č, ţ→ž, Ċ→đ)")
     a = ap.parse_args()
     path = a.file
     low = path.lower()
@@ -131,13 +102,9 @@ def main():
     elif low.endswith(".xlsx"):
         text = xlsx_text(path)
     elif low.endswith(".pdf"):
-        text = pdf_text(path)
-        if not a.no_fix_diacritics:
-            text, n = fix_diacritics(text)
-            if n:
-                sys.stderr.write(f"[info] popravljeno {n} oštećenih znakova (ĉ ţ Ċ → č ž đ); isključiti sa --no-fix-diacritics\n")
+        sys.exit("PDF se ne čita. Zatražite od autora akta Word dokument (.docx) i pokrenite ponovo.")
     elif low.endswith(".doc"):
-        sys.exit("Stari .doc: sačuvajte kao .docx ili PDF (ili `soffice --headless --convert-to docx`).")
+        sys.exit("Stari .doc format se ne čita. Zatražite Word dokument sačuvan kao .docx (Fajl → Sačuvaj kao → .docx).")
     else:
         text = open(path, encoding="utf-8-sig", errors="replace").read()
     if not text.strip():

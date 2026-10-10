@@ -2,7 +2,7 @@
 """Smoke test skripti – radi isto na Windows-u, macOS-u i Linux-u.
 
 Upotreba:  python tests/smoke_test.py
-Proverava: izdvajanje teksta iz .docx i .md, UTF-8 (č, š, ž, ć, đ), lint nalaze na test aktu,
+Proverava: izdvajanje teksta iz .docx i .md, odbijanje PDF/.doc, UTF-8 (č, š, ž, ć, đ), lint nalaze na test aktu,
 pakovanje .skill arhive.
 """
 import os
@@ -79,11 +79,12 @@ def main():
     rc, so, se = run(SCRIPTS / "extract_text.py", sp, "-o", spaced / "izlaz.txt")
     check(rc == 0, "putanja sa razmacima radi")
 
-    # 5b) popravka oštećenih dijakritika (funkcija direktno)
-    sys.path.insert(0, str(SCRIPTS))
-    import extract_text as et
-    fixed, n = et.fix_diacritics("angaţuje ĉlan predviĊeno ĐORĐE Ţivot")
-    check(fixed == "angažuje član predviđeno ĐORĐE Život" and n > 0, "fix_diacritics popravlja ĉ ţ Ċ (PDF sa starim fontovima)")
+    # 5b) PDF i .doc se odbijaju uz poruku da se traži Word
+    for name in ("akt.pdf", "akt.doc"):
+        f = tmp / name
+        f.write_bytes(b"%PDF-1.4 test")
+        rc, so, se = run(SCRIPTS / "extract_text.py", f, "-o", tmp / (name + ".txt"))
+        check(rc != 0 and ("Word" in se) and not (tmp / (name + ".txt")).exists(), f"{name} se ne čita, traži se Word")
 
     # 6) pakovanje
     rc, so, se = run(ROOT / "package.py", "rs-bzr-akt-izrada")

@@ -1,6 +1,6 @@
 ---
 name: rs-bzr-akt-review
-description: Revizija (provera grešaka) dokumenata iz oblasti bezbednosti i zdravlja na radu u Srbiji – akt o proceni rizika, elaborat o uređenju gradilišta, plan preventivnih mera, prijava gradilišta, stručni nalaz o pregledu opreme / ispitivanju uslova radne sredine, programi obuke, evidencije, lekarski pregledi, dozvola za rad, rad na visini. Koristi uvek kada korisnik da dokument (docx/pdf/xlsx/tekst) na proveru i napiše „proveri akt“, „nađi greške“, „revizija“, „pregledaj akt“, „da li je akt u skladu sa zakonom“, pomene ZBZR / Zakon o bezbednosti i zdravlju na radu / Sl. glasnik RS / savetnik za BZR / DND – čak i ako reč „revizija“ nije izgovorena. Poredi dokument sa Zakonom 35/2023 i podzakonskim aktima (pravilnik 76/2024, 5/2025, 4/2025, Uredba o gradilištima) i daje primedbe sa ozbiljnošću, članom i pouzdanošću. Odgovara na srpskom.
+description: Revizija (provera grešaka) dokumenata iz oblasti bezbednosti i zdravlja na radu u Srbiji – akt o proceni rizika, elaborat o uređenju gradilišta, plan preventivnih mera, prijava gradilišta, stručni nalaz o pregledu opreme / ispitivanju uslova radne sredine, programi obuke, evidencije, lekarski pregledi, dozvola za rad, rad na visini. Koristi uvek kada korisnik da dokument (Word .docx) na proveru i napiše „proveri akt“, „nađi greške“, „revizija“, „pregledaj akt“, „da li je akt u skladu sa zakonom“, pomene ZBZR / Zakon o bezbednosti i zdravlju na radu / Sl. glasnik RS / savetnik za BZR / DND – čak i ako reč „revizija“ nije izgovorena. Poredi dokument sa Zakonom 35/2023 i podzakonskim aktima (pravilnik 76/2024, 5/2025, 4/2025, Uredba o gradilištima) i daje primedbe sa ozbiljnošću, članom i pouzdanošću. Radi isključivo sa Word dokumentima (.docx): ako korisnik da PDF, sken, sliku ili stari .doc, ne pokušavaj da ga čitaš nego zatraži Word fajl. Odgovara na srpskom.
 ---
 
 # Revizija srpskih dokumenata iz oblasti BZR
@@ -17,11 +17,16 @@ Ti si stariji revizor u konsultantskoj kući za bezbednost i zdravlje na radu (S
 
 ## Korak 1. Prijem dokumenta
 
-1. Ako je dat fajl: `python scripts/extract_text.py <fajl> -o akt.txt` (docx/xlsx/pdf/txt; izlaz je UTF-8). Za skenirani PDF bez tekstualnog sloja reci da je potreban OCR i ne pogađaj sadržaj.
-   - **Windows:** koristi `py -3` umesto `python` ako `python` nije dostupan; **nemoj** koristiti preusmeravanje `>` u PowerShell-u (kvari č, š, ž, ć, đ) – uvek `-o`. Putanje sa razmacima stavi pod navodnike. Za PDF treba `pip install pypdf` (ili `pdftotext`).
+**Format ulaza – samo Word.** Dokument se proverava isključivo iz Word fajla (`.docx`). Ako korisnik da **PDF**, sken, fotografiju/sliku ili stari **`.doc`** (ili `.odt`, Google Docs link), **ne pokušavaj da ga pročitaš, ne izvlači tekst iz njega i ne nagađaj sadržaj** – zaustavi se i odgovori otprilike ovako (na srpskom):
+
+> Ne mogu da proverim akt iz PDF-a. Pošaljite, molim vas, Word dokument (.docx) – originalni fajl iz kojeg je akt nastao ili „Sačuvaj kao .docx“. Samo iz Word fajla mogu pouzdano da pročitam tekst i tabele (npr. tabelu procene rizika).
+
+Zašto: iz PDF-a se tabele i slova (č, š, ž, ć, đ) često pogrešno čitaju, pa bi revizija mogla da prijavi greške kojih nema ili da propusti prave. Ako korisnik nalepi sam tekst akta u poruku – to je dozvoljeno, ali napomeni da tabele moraju biti cele i da je Word fajl pouzdaniji.
+
+1. Ako je dat fajl: `python scripts/extract_text.py <fajl> -o akt.txt` (izlaz je UTF-8).
+   - **Windows:** koristi `py -3` umesto `python` ako `python` nije dostupan; **nemoj** koristiti preusmeravanje `>` u PowerShell-u (kvari č, š, ž, ć, đ) – uvek `-o`. Putanje sa razmacima stavi pod navodnike. 
    - **macOS/Linux:** `python3` umesto `python`.
    - Radni fajl (`akt.txt`) pravi se u radnom folderu ili u sistemskom privremenom folderu (npr. `tempfile.gettempdir()`), nikako u hardkodiranom `/tmp`.
-   - Za PDF skript sam popravlja oštećene dijakritike (ĉ→č, ţ→ž, Ċ→đ) koje stari fontovi proizvode; to se vidi u poruci `[info]`.
    - **Dugački dokumenti** (stotine strana, npr. akt od 200+ strana): ne pokušavaj da pročitaš sve odjednom. Prvo sadržaj/naslove i spisak radnih mesta, zatim odeljke redom (po delovima 1–8), a tabele rizika proveri uzorkom (po 5–10 redova iz više odeljaka). U izveštaju navedi koji su delovi čitani u celini, a koji uzorkom.
 2. Pokreni heuristike: `python scripts/lint_akt.py akt.txt --type auto --today <datum>`. To su brzi signali (zastareli pozivi, nepopunjena polja, mešanje pisama, odsustvo delova akta, licenca, aritmetika tabele rizika). Svaki signal proveri u tekstu; ne unosi u izveštaj ono što se pokaže kao lažan alarm.
 3. Odredi vrstu dokumenta i izaberi kontrolnu listu (čitaj **samo** potrebne fajlove iz `references/`):
@@ -80,5 +85,6 @@ Dokumenti sadrže imena, zdravstvene podatke, brojeve licenci. Ne ispisuj ih u i
 ## Šta skill ne radi
 
 - Ne zamenjuje licencirano stručno lice i ne daje pravno mišljenje; ne potpisuje i ne „overava“ dokument.
+- Ne čita PDF, skenove, slike ni stari `.doc` – za njih traži Word (.docx).
 - Ne ocenjuje tehničku ispravnost merenja (metrologiju), samo potpunost i usaglašenost nalaza.
 - **Ne pokriva** zaštitu od požara, smanjenje rizika od katastrofa, upravljanje otpadom i hemikalije (osim odredbi ZBZR čl. 30 i 62). Ako takav dokument stigne – reci da za tu oblast nema proverene normativne osnove, ponudi samo strukturnu i unutrašnju proveru (potpunost, usaglašenost, očigledne greške) i zatraži tekst propisa.

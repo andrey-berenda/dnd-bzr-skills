@@ -1,6 +1,6 @@
 # Javno dostupni akti za testiranje (samo linkovi)
 
-Pronađeno 2026-10-10. **Ne kopirati u repozitorijum**: sadrže imena zaposlenih/izvođača i mogu imati autorska prava. Preuzeti lokalno, koristiti za probu skilla.
+Pronađeno 2026-10-10. **Ne kopirati u repozitorijum**: sadrže imena zaposlenih/izvođača i mogu imati autorska prava. Preuzeti lokalno za probu. **Napomena:** skill čita samo Word (.docx), a ovi izvori su uglavnom PDF – pre probe ih treba pretvoriti u .docx (ili koristiti kao primer za proveru da skill traži Word umesto PDF-a).
 
 | Dokument | Napomena | Link |
 |---|---|---|
