@@ -174,10 +174,19 @@ def main():
     if not findings:
         print("Nema nalaza (to ne dokazuje da nema grešaka).")
         return
-    for code, desc, ln in sorted(findings, key=lambda x: (x[0], x[2])):
-        loc = f"red {ln}" if ln else "—"
-        print(f"- [{code}] {desc} ({loc})")
-    print(f"\nUkupno nalaza: {len(findings)}. Heuristike – potvrdi u tekstu.")
+    groups = defaultdict(list)
+    for code, desc, ln in findings:
+        groups[code].append((desc, ln))
+    for code in sorted(groups):
+        items = sorted(groups[code], key=lambda x: x[1])
+        desc0, ln0 = items[0]
+        loc = f"red {ln0}" if ln0 else "—"
+        if len(items) == 1:
+            print(f"- [{code}] {desc0} ({loc})")
+        else:
+            lines = ", ".join(str(l) for _, l in items[:6] if l)
+            print(f"- [{code}] ×{len(items)} – npr. {desc0} ({loc}); redovi: {lines}{'…' if len(items) > 6 else ''}")
+    print(f"\nUkupno nalaza: {len(findings)} u {len(groups)} grupa. Heuristike – potvrdi u tekstu.")
 
 
 if __name__ == "__main__":

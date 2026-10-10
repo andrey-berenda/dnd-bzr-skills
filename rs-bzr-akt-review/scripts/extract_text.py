@@ -90,6 +90,18 @@ def xlsx_text(path):
         return "\n".join(out)
 
 
+def fix_diacritics(text):
+    """Mnogi srpski PDF-ovi (stari fontovi) daju ĉ/ţ/Ċ umesto č/ž/đ. Popravlja samo ako su takvi znaci prisutni."""
+    if not re.search(r"[ĉĈţŢĊ]", text):
+        return text, 0
+    n = len(re.findall(r"[ĉĈţŢĊ]", text))
+    text = (text.replace("ĉ", "č").replace("Ĉ", "Č").replace("ţ", "ž").replace("Ţ", "Ž"))
+    # Ċ je obično đ unutar reči malim slovima (predviĊeno), a Đ na početku reči/velikim slovima
+    text = re.sub(r"(?<=[a-zčćšžđ])Ċ|Ċ(?=[a-zčćšžđ])", "đ", text)
+    text = text.replace("Ċ", "Đ")
+    return text, n
+
+
 def pdf_text(path):
     if shutil.which("pdftotext"):
         r = subprocess.run(["pdftotext", "-layout", "-enc", "UTF-8", path, "-"],
@@ -108,6 +120,7 @@ def main():
     ap = argparse.ArgumentParser(description="Izdvaja tekst iz docx/xlsx/pdf/txt (izlaz UTF-8).")
     ap.add_argument("file")
     ap.add_argument("-o", "--output", help="upisati rezultat u ovaj fajl (UTF-8) umesto na stdout")
+    ap.add_argument("--no-fix-diacritics", action="store_true", help="ne popravljati oštećene dijakritike u PDF-u (ĉ→č, ţ→ž, Ċ→đ)")
     a = ap.parse_args()
     path = a.file
     low = path.lower()
@@ -119,6 +132,10 @@ def main():
         text = xlsx_text(path)
     elif low.endswith(".pdf"):
         text = pdf_text(path)
+        if not a.no_fix_diacritics:
+            text, n = fix_diacritics(text)
+            if n:
+                sys.stderr.write(f"[info] popravljeno {n} oštećenih znakova (ĉ ţ Ċ → č ž đ); isključiti sa --no-fix-diacritics\n")
     elif low.endswith(".doc"):
         sys.exit("Stari .doc: sačuvajte kao .docx ili PDF (ili `soffice --headless --convert-to docx`).")
     else:

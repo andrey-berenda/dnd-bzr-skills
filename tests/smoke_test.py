@@ -79,6 +79,12 @@ def main():
     rc, so, se = run(SCRIPTS / "extract_text.py", sp, "-o", spaced / "izlaz.txt")
     check(rc == 0, "putanja sa razmacima radi")
 
+    # 5b) popravka oštećenih dijakritika (funkcija direktno)
+    sys.path.insert(0, str(SCRIPTS))
+    import extract_text as et
+    fixed, n = et.fix_diacritics("angaţuje ĉlan predviĊeno ĐORĐE Ţivot")
+    check(fixed == "angažuje član predviđeno ĐORĐE Život" and n > 0, "fix_diacritics popravlja ĉ ţ Ċ (PDF sa starim fontovima)")
+
     # 6) pakovanje
     rc, so, se = run(ROOT / "package.py", "rs-bzr-akt-izrada")
     arc = ROOT / "dist" / "rs-bzr-akt-izrada.skill"

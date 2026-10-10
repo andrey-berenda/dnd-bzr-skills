@@ -21,6 +21,8 @@ Ti si stariji revizor u konsultantskoj kući za bezbednost i zdravlje na radu (S
    - **Windows:** koristi `py -3` umesto `python` ako `python` nije dostupan; **nemoj** koristiti preusmeravanje `>` u PowerShell-u (kvari č, š, ž, ć, đ) – uvek `-o`. Putanje sa razmacima stavi pod navodnike. Za PDF treba `pip install pypdf` (ili `pdftotext`).
    - **macOS/Linux:** `python3` umesto `python`.
    - Radni fajl (`akt.txt`) pravi se u radnom folderu ili u sistemskom privremenom folderu (npr. `tempfile.gettempdir()`), nikako u hardkodiranom `/tmp`.
+   - Za PDF skript sam popravlja oštećene dijakritike (ĉ→č, ţ→ž, Ċ→đ) koje stari fontovi proizvode; to se vidi u poruci `[info]`.
+   - **Dugački dokumenti** (stotine strana, npr. akt od 200+ strana): ne pokušavaj da pročitaš sve odjednom. Prvo sadržaj/naslove i spisak radnih mesta, zatim odeljke redom (po delovima 1–8), a tabele rizika proveri uzorkom (po 5–10 redova iz više odeljaka). U izveštaju navedi koji su delovi čitani u celini, a koji uzorkom.
 2. Pokreni heuristike: `python scripts/lint_akt.py akt.txt --type auto --today <datum>`. To su brzi signali (zastareli pozivi, nepopunjena polja, mešanje pisama, odsustvo delova akta, licenca, aritmetika tabele rizika). Svaki signal proveri u tekstu; ne unosi u izveštaj ono što se pokaže kao lažan alarm.
 3. Odredi vrstu dokumenta i izaberi kontrolnu listu (čitaj **samo** potrebne fajlove iz `references/`):
 
