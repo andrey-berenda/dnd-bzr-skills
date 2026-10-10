@@ -1,7 +1,8 @@
 name: smoke-test
 on: [push, pull_request]
 jobs:
-  test:
+  plain-python:
+    name: python (${{ matrix.os }}, ${{ matrix.python }})
     strategy:
       fail-fast: false
       matrix:
@@ -14,3 +15,20 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python tests/smoke_test.py
+
+  uv:
+    name: uv (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Smoke test preko uv run
+        run: uv run tests/smoke_test.py
+      - name: Skripte preko uv run (sa defusedxml iz inline metapodataka)
+        run: |
+          uv run rs-bzr-akt-review/scripts/extract_text.py rs-bzr-akt-review/evals/fixtures/akt_sample_flawed.md -o akt.txt
+          uv run rs-bzr-akt-review/scripts/lint_akt.py akt.txt --today 2026-10-10

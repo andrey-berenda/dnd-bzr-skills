@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.9"
+# dependencies = []
+# ///
 """Smoke test skripti – radi isto na Windows-u, macOS-u i Linux-u.
 
 Upotreba:  python tests/smoke_test.py

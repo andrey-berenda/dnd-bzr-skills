@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.9"
+# dependencies = []
+# ///
 """Pakuje foldere skillova u .skill arhive (radi na Windows-u, macOS-u i Linux-u).
 
 Upotreba:  python package.py            (spakuje oba skilla u folder dist/)

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.9"
+# dependencies = ["defusedxml"]
+# ///
 """Izdvaja tekst iz Word dokumenta (.docx), a po potrebi .xlsx / .txt / .md, za reviziju akata.
 
 Upotreba:  python extract_text.py <fajl> [-o izlaz.txt]

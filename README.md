@@ -18,16 +18,7 @@ Stanje na dan **2026-10-10**: ZBZR 35/2023, pravilnik o proceni rizika 76/2024, 
 Nije pokriveno: zaštita od požara, smanjenje rizika od katastrofa, upravljanje otpadom, hemikalije.
 
 ## Instalacija
-Detaljna uputstva (Python, dodavanje u Claude, provera): [`INSTALACIJA.md`](INSTALACIJA.md).
-
-Arhive se prave komandom `python package.py` (izlaz: `dist/*.skill`), zatim se dodaju u Claude. Skripte (`extract_text.py`, `lint_akt.py`) koriste samo standardnu biblioteku Pythona 3.9+.
-
-### Windows
-- Python 3 sa python.org (ili `py -3` iz Python launchera). Komande: `py -3 rs-bzr-akt-review\scripts\extract_text.py akt.docx -o akt.txt`, zatim `py -3 rs-bzr-akt-review\scripts\lint_akt.py akt.txt`.
-- Uvek koristiti `-o`; preusmeravanje `>` u PowerShell-u kvari č, š, ž, ć, đ. Skripte čitaju i pišu UTF-8.
-- Ulaz je isključivo Word (`.docx`). PDF, skenovi i stari `.doc` se ne čitaju – skill traži Word fajl.
-- Opciono: `pip install defusedxml` (bezbednije čitanje .docx/.xlsx).
-- Test: `python tests/smoke_test.py`; isti test se automatski izvršava na Windows-u, macOS-u i Linux-u (GitHub Actions).
+Detaljno: [`INSTALACIJA.md`](INSTALACIJA.md). Ukratko: instalirati [uv](https://docs.astral.sh/uv/) (Windows: `winget install --id=astral-sh.uv -e`), zatim `uv run package.py` pravi `dist/*.skill` koje treba otpremiti u Claude. Skripte pokreće `uv run ...` (sam preuzima Python i `defusedxml`). Ulaz je isključivo Word (`.docx`); PDF, skenovi i stari `.doc` se ne čitaju – skill traži Word fajl.
 
 ## Status
 Radna verzija. Nije testirana na stvarnim aktima. Ne zamenjuje licencirano stručno lice i nije pravno mišljenje.

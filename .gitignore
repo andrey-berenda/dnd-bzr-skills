@@ -1,4 +1,23 @@
-*.skill
+# Python / uv: okruženja i keševi (zavisnosti se ne čuvaju u repozitorijumu)
+.venv/
+venv/
+env/
 __pycache__/
-.DS_Store
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.uv-cache/
+
+# Izlaz paketiranja
 dist/
+*.skill
+
+# Lokalni test dokumenti (stvarni akti sadrže lične podatke – ne objavljivati)
+evals/local/
+rs-bzr-akt-review/evals/local/
+*.pdf
+
+# Sistemski fajlovi
+.DS_Store
+Thumbs.db

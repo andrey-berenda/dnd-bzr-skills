@@ -2,27 +2,31 @@
 
 Dva skilla: `rs-bzr-akt-review` (revizija) i `rs-bzr-akt-izrada` (izrada nacrta). Instalirajte **oba** – izrada koristi propise i kontrolne liste iz revizije.
 
-## 1. Python (potreban samo za pomoćne skripte)
-Skripte (`extract_text.py`, `lint_akt.py`) izdvajaju tekst iz Word dokumenta i rade brze provere. Bez Pythona sami kontrolne liste i dalje postoje, ali automatske provere neće raditi. Potreban je **Python 3.9 ili noviji**; dodatne biblioteke nisu potrebne.
+## 1. uv (instalira i pokreće Python – ne treba posebno instalirati Python)
+Pomoćne skripte (`extract_text.py`, `lint_akt.py`) izdvajaju tekst iz Word dokumenta i rade brze provere. Pokreću se alatom [uv](https://docs.astral.sh/uv/): on sam preuzme odgovarajući Python i potrebnu biblioteku (`defusedxml`) pri prvom pokretanju, bez administratorskih prava.
 
-### Windows
-1. Proverite da li već postoji: otvorite **PowerShell** i ukucajte `py -3 --version`. Ako ispiše `Python 3.x.x` – gotovo.
-2. Ako ne postoji, instalirajte jednom od dve opcije:
-   - preuzmite instalaciju sa https://www.python.org/downloads/ i u prvom prozoru **uključite „Add python.exe to PATH“**, zatim „Install Now“; ili
-   - u PowerShell-u: `winget install Python.Python.3.12`
-3. Zatvorite i ponovo otvorite PowerShell, pa `py -3 --version`.
-4. Opciono (bezbednije čitanje Word fajlova): `py -3 -m pip install defusedxml`
+### Windows (PowerShell)
+```
+winget install --id=astral-sh.uv -e
+```
+ili, ako `winget` nije dostupan:
+```
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+Zatvorite i ponovo otvorite PowerShell, pa proverite: `uv --version`.
 
-### macOS
-`python3 --version`. Ako nema: `brew install python` ili instalacija sa python.org.
+### macOS / Linux
+```
+brew install uv
+```
+ili `curl -LsSf https://astral.sh/uv/install.sh | sh`. Provera: `uv --version`.
 
-### Linux
-`python3 --version`. Ako nema: `sudo apt install python3`.
+Prvo pokretanje skripte traži internet (preuzimanje Pythona i `defusedxml`); posle toga radi iz keša.
 
 ## 2. Dodavanje skillova u Claude
-Pripremite arhive:
+Pripremite arhive iz foldera repozitorijuma:
 ```
-python package.py          # macOS/Linux: python3 package.py ; Windows: py -3 package.py
+uv run package.py
 ```
 Dobijaju se `dist/rs-bzr-akt-review.skill` i `dist/rs-bzr-akt-izrada.skill`.
 
@@ -31,13 +35,19 @@ Dobijaju se `dist/rs-bzr-akt-review.skill` i `dist/rs-bzr-akt-izrada.skill`.
   - Windows: `%USERPROFILE%\.claude\skills\`
   - macOS/Linux: `~/.claude/skills/`
 
-Napomena: tačne korake otpremanja u aplikaciji nismo proveravali na svakoj verziji – ako se meni razlikuje, potražite „Skills“ u podešavanjima.
-
 ## 3. Provera da radi
-1. Iz foldera repozitorijuma: `py -3 tests/smoke_test.py` (Windows) ili `python3 tests/smoke_test.py`. Treba da ispiše `REZULTAT: SVE U REDU`.
+1. Iz foldera repozitorijuma: `uv run tests/smoke_test.py`. Treba da ispiše `REZULTAT: SVE U REDU`.
 2. U Claude-u priložite **Word (.docx)** akt i napišite: „Proveri ovaj akt o proceni rizika.“ Za PDF skill će tražiti Word fajl.
 
+Ručno pokretanje skripti:
+```
+uv run rs-bzr-akt-review/scripts/extract_text.py akt.docx -o akt.txt
+uv run rs-bzr-akt-review/scripts/lint_akt.py akt.txt
+```
+
 ## Najčešći problemi
-- `python` nije prepoznat na Windows-u → koristite `py -3`, ili ponovo instalirajte Python sa uključenim „Add python.exe to PATH“.
-- Slova č, š, ž, ć, đ su pokvarena u izlazu → koristite opciju `-o` (`py -3 rs-bzr-akt-review\scripts\extract_text.py akt.docx -o akt.txt`), ne preusmeravanje `>` u PowerShell-u.
+- `uv` nije prepoznat posle instalacije → zatvorite i ponovo otvorite terminal (PATH se osvežava pri novom prozoru).
+- PowerShell blokira skripte (ExecutionPolicy) → koristite `winget` varijantu, ili komandu iz drugog bloka sa `-ExecutionPolicy ByPass`.
+- Korporativni računar bez interneta ili sa proxy-jem → uv mora da preuzme Python/biblioteku; zatražite od IT-ja pristup ili instalirajte Python 3.9+ ručno i koristite `py -3` / `python3` umesto `uv run` (skripte rade i bez uv-a, samo uz upozorenje o `defusedxml`).
+- Slova č, š, ž, ć, đ su pokvarena u izlazu → koristite opciju `-o`, ne preusmeravanje `>` u PowerShell-u.
 - Putanja sa razmacima → stavite je pod navodnike.

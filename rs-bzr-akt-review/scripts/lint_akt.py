@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.9"
+# dependencies = []
+# ///
 """Brza mehanička provera teksta akta (posle extract_text.py).
 
 Upotreba:  python lint_akt.py <tekst.txt | -> [--type risk|gradiliste|nalaz|auto] [--today YYYY-MM-DD]
