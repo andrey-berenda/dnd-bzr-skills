@@ -5,8 +5,7 @@
 # ///
 """Izdvaja tekst iz Word dokumenta (.docx), a po potrebi .xlsx / .txt / .md, za reviziju akata.
 
-Upotreba:  python extract_text.py <fajl> [-o izlaz.txt]
-(na Windows-u: py -3 extract_text.py <fajl> -o izlaz.txt; na macOS/Linux: python3 ...)
+Upotreba:  uv run extract_text.py <fajl> [-o izlaz.txt]
 Preporuka: koristiti -o, jer preusmeravanje (>) u PowerShell-u može pokvariti kodiranje (č, š, ž, ć, đ).
 Izlaz je uvek UTF-8.
 
@@ -14,20 +13,14 @@ Izlaz je uvek UTF-8.
 - .xlsx: svaki list, redovi sa " | ".
 - .pdf i .doc se NE čitaju: skript prekida rad i traži Word (.docx) dokument.
 - ostalo: čita se kao UTF-8 tekst.
-Samo standardna biblioteka (defusedxml se koristi ako je instaliran).
+Zavisnost (defusedxml) uv instalira sam iz metapodataka na vrhu fajla.
 """
 import argparse
 import re
 import sys
 import zipfile
 
-try:  # defusedxml štiti od XXE / „billion laughs“ u ulaznim fajlovima
-    import defusedxml.ElementTree as ET  # type: ignore
-except ImportError:  # standardni parser ne razvija spoljne entitete, ali je podložan širenju entiteta
-    import xml.etree.ElementTree as ET  # noqa: S405
-    _XML_FALLBACK = True
-else:
-    _XML_FALLBACK = False
+import defusedxml.ElementTree as ET  # bezbedno čitanje XML-a (zaštita od XXE / „billion laughs“)
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 S = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
@@ -99,8 +92,6 @@ def main():
     a = ap.parse_args()
     path = a.file
     low = path.lower()
-    if _XML_FALLBACK and low.endswith((".docx", ".xlsx")):
-        sys.stderr.write("[upozorenje] defusedxml nije instaliran (pip install defusedxml); koristi se standardni XML parser\n")
     if low.endswith(".docx"):
         text = docx_text(path)
     elif low.endswith(".xlsx"):

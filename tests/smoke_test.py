@@ -5,11 +5,12 @@
 # ///
 """Smoke test skripti – radi isto na Windows-u, macOS-u i Linux-u.
 
-Upotreba:  python tests/smoke_test.py
+Upotreba:  uv run tests/smoke_test.py
 Proverava: izdvajanje teksta iz .docx i .md, odbijanje PDF/.doc, UTF-8 (č, š, ž, ć, đ), lint nalaze na test aktu,
 pakovanje .skill arhive.
 """
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -29,7 +30,10 @@ def run(*args, stdin=None):
     env = dict(os.environ)
     env.pop("PYTHONUTF8", None)          # simulira podrazumevana podešavanja (na Windows-u cp1252/cp1250)
     env.pop("PYTHONIOENCODING", None)
-    r = subprocess.run([sys.executable, *map(str, args)], capture_output=True, input=stdin, env=env)
+    uv = shutil.which("uv")
+    if not uv:
+        sys.exit("uv nije pronađen – pokrenite skill rs-bzr-instalacija (ili instalirajte uv: https://docs.astral.sh/uv/)")
+    r = subprocess.run([uv, "run", "--quiet", *map(str, args)], capture_output=True, input=stdin, env=env)
     return r.returncode, r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
 
 

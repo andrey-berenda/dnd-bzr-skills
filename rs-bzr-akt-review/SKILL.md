@@ -24,7 +24,7 @@ Ti si stariji revizor u konsultantskoj kući za bezbednost i zdravlje na radu (S
 Zašto: iz PDF-a se tabele i slova (č, š, ž, ć, đ) često pogrešno čitaju, pa bi revizija mogla da prijavi greške kojih nema ili da propusti prave. Ako korisnik nalepi sam tekst akta u poruku – to je dozvoljeno, ali napomeni da tabele moraju biti cele i da je Word fajl pouzdaniji.
 
 1. Ako je dat fajl: `uv run scripts/extract_text.py <fajl> -o akt.txt` (izlaz je UTF-8; uv sam obezbeđuje Python i biblioteku).
-   - **Bez uv-a:** `py -3` (Windows) ili `python3` (macOS/Linux) umesto `uv run`; skripte rade i tako (samo uz upozorenje o `defusedxml`).
+   - **Ako `uv` nije instaliran** (komanda `uv` nije pronađena): pozovi skill **rs-bzr-instalacija** (Skill alat) – on traži saglasnost, instalira uv i proverava skripte (ili daje komande koje korisnik sam kuca). Ako instalacija nije moguća, stani i objasni korisniku zašto; ne pokušavaj da pokreneš skripte na drugi način.
    - **Windows:** **nemoj** koristiti preusmeravanje `>` u PowerShell-u (kvari č, š, ž, ć, đ) – uvek `-o`. Putanje sa razmacima stavi pod navodnike. 
    - Radni fajl (`akt.txt`) pravi se u radnom folderu ili u sistemskom privremenom folderu (npr. `tempfile.gettempdir()`), nikako u hardkodiranom `/tmp`.
    - **Dugački dokumenti** (stotine strana, npr. akt od 200+ strana): ne pokušavaj da pročitaš sve odjednom. Prvo sadržaj/naslove i spisak radnih mesta, zatim odeljke redom (po delovima 1–8), a tabele rizika proveri uzorkom (po 5–10 redova iz više odeljaka). U izveštaju navedi koji su delovi čitani u celini, a koji uzorkom.

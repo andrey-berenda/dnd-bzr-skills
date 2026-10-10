@@ -5,15 +5,15 @@
 # ///
 """Pakuje foldere skillova u .skill arhive (radi na Windows-u, macOS-u i Linux-u).
 
-Upotreba:  python package.py            (spakuje oba skilla u folder dist/)
-           python package.py rs-bzr-akt-review
+Upotreba:  uv run package.py            (spakuje sva tri skilla u folder dist/)
+           uv run package.py rs-bzr-akt-review
 """
 import sys
 import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-SKILLS = ["rs-bzr-akt-review", "rs-bzr-akt-izrada"]
+SKILLS = ["rs-bzr-akt-review", "rs-bzr-akt-izrada", "rs-bzr-instalacija"]
 
 
 def pack(name: str, out_dir: Path) -> Path:

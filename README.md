@@ -6,6 +6,7 @@ Claude skillovi za konsultantski rad iz oblasti bezbednosti i zdravlja na radu (
 |---|---|
 | [`rs-bzr-akt-review`](rs-bzr-akt-review/SKILL.md) | Revizija dokumenata: akt o proceni rizika, elaborat / plan preventivnih mera / prijava gradilišta, stručni nalaz o pregledu i ispitivanju, obuka, evidencije, lekarski pregledi, dozvola za rad, rad na visini |
 | [`rs-bzr-akt-izrada`](rs-bzr-akt-izrada/SKILL.md) | Izrada nacrta istih dokumenata (oslanja se na kontrolne liste iz revizije) |
+| [`rs-bzr-instalacija`](rs-bzr-instalacija/SKILL.md) | Instalacija i provera okruženja (uv). Pozivaju ga ostala dva skilla kada `uv` nije instaliran |
 
 ## Zašto dva skilla
 - **`rs-bzr-akt-review`** je glavni: sadrži celu normativnu osnovu (`references/`), kontrolne liste, šablon izveštaja, skripte i testove.

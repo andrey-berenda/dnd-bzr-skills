@@ -5,10 +5,10 @@
 # ///
 """Brza mehanička provera teksta akta (posle extract_text.py).
 
-Upotreba:  python lint_akt.py <tekst.txt | -> [--type risk|gradiliste|nalaz|auto] [--today YYYY-MM-DD]
+Upotreba:  uv run lint_akt.py <tekst.txt | -> [--type risk|gradiliste|nalaz|auto] [--today YYYY-MM-DD]
 
 Ovo su HEURISTIKE: nalaze sumnjiva mesta, a odluku donosi revizor. Ispisuje listu
-nalaza „ŠIFRA – opis – red“. Ništa ne ispravlja. Samo standardna biblioteka.
+nalaza „ŠIFRA – opis – red“. Ništa ne ispravlja.
 Proverava: zastarele pozive i termine, oznake nedovršenosti, mešanje pisama u rečima,
 prisustvo ključnih delova akta o proceni rizika, brojeve licenci, datume u dalekoj
 budućnosti, usaglašenost tabela rizika (verovatnoća × težina = nivo).
